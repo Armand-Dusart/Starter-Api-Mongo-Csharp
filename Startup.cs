@@ -17,7 +17,7 @@ using MongoDB.Driver;
 using WebApi.Interfaces;
 using WebApi.Repository;
 using WebApi.Services;
-
+using WebApi.Factory;
 namespace WepApi
 {
     public class Startup
@@ -45,16 +45,19 @@ namespace WepApi
                 options.DatabaseName = Configuration.GetSection("MongoDb:Database").Value;
             });
             services.AddSingleton<IMongoClient, MongoClient>(_ => new MongoClient(Configuration.GetSection("MongoDb:ConnectionString").Value));
-            services.AddScoped(typeof(IServiceBase<>), typeof(ServiceBase<>));
 
+            //services.AddScoped(typeof(IServiceBase<>), typeof(ServiceBase<>));
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            //services.AddScoped(typeof(IServiceFactory<>), typeof(ServiceFactory<,>));
             services.AddControllers();
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             //Enable CORS
-            app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            app.UseCors();
 
             if (env.IsDevelopment())
             {
@@ -63,13 +66,14 @@ namespace WepApi
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-            //app.UseMvc();
+
+
         }
     }
 }

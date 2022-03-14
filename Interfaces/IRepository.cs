@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace WebApi.Interfaces
 {
-    public interface IRepository<T>
+    public interface IRepository<T> 
     {
         IQueryable<T> AsQueryable();
         public Task<List<T>> GetAll();

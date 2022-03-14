@@ -12,11 +12,9 @@ namespace WebApi.Factory
     {
         public IServiceBase<T> Service;
 
-        public IServiceBase<T> CreateInstance()
+        public void CreateInstance()
         {
             Service = (IServiceBase<T>)Activator.CreateInstance(typeof(S));
-
-            return Service;
         }
 
     }

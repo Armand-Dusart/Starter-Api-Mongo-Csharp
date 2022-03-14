@@ -15,6 +15,9 @@ namespace WebApi
     {
         public static void Main(string[] args)
         {
+
+
+
             CreateHostBuilder(args).Run();
         }
 

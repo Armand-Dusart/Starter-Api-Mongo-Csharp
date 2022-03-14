@@ -9,16 +9,15 @@ using Newtonsoft.Json;
 
 namespace WebApi.Services
 {
-    public class ServiceBase<T> : IServiceBase<T> where T : EntityBase
+    public class ServiceBase<T> : IServiceBase<T> where T : IEntityBase, new()
     {
-        private readonly Repository<T> _repository;
+        private readonly IRepository<T> _repository;
 
-        public ServiceBase()
+        public ServiceBase(IRepository<T> repository)
         {
-
+            _repository = repository;
         }
 
-        
 
         public async Task<string> GetByIdEntity(string entity)
         {

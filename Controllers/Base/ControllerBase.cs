@@ -9,24 +9,25 @@ using WebApi.Services;
 
 namespace WebApi.Controllers
 {
-    [Route("[controller]")]
     [ApiController]
-    public class ControllerBase<T,S> : Controller where T:IEntityBase, new() where S : IServiceBase<T>, new()
+    [Route("[controller]")]
+    public class ControllerBase<T,S> : Controller where T:IEntityBase where S : IServiceBase<T>, new()
     {
-        public ServiceFactory<T, S> ServiceFactory { get; set;  }
-        public IServiceBase<T> Service { get; set; }
+        public readonly ServiceFactory<T, S> ServiceFactory;
 
-        public ControllerBase() {
-            Service = ServiceFactory.CreateInstance();
+        public ControllerBase(ServiceFactory<T, S> serviceFactory) {
+            ServiceFactory = serviceFactory;
+            ServiceFactory.CreateInstance();
         }
 
         [HttpGet]
         public virtual async Task<string> GetAll()
         {
-            string result = await Service.GetAllEntity();
+            string result = await ServiceFactory.Service.GetAllEntity();
 
             return result;
         }
+
 
 
     }

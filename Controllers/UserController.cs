@@ -3,29 +3,39 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApi.Factory;
 using WebApi.Interfaces;
 using WebApi.Models;
 using WebApi.Services;
 
 namespace WebApi.Controllers
 {
-    [Route("[controller]")]
     [ApiController]
-    public class UserController : ControllerBase<UserModel, ServiceBase<UserModel>>
+    [Route("[controller]")]
+    public class UserController : ControllerBase<UserModel, UserService>
     {
-        public UserController() : base()
+        public UserController() : base(new ServiceFactory<UserModel, UserService>())
         {
 
         }
 
         [HttpGet("GetAll")]
-        public override async Task<string> GetAll()
+        public async Task<string> GetAll()
         {
-            Console.WriteLine("test");
             string result = await ServiceFactory.Service.GetAllEntity();
 
             return result;
         }
+
+        [HttpGet("test")]
+        public string test()
+        {
+            string result = "test";
+
+            return result;
+        }
+
+
     }
 }
 

@@ -7,6 +7,6 @@ namespace WebApi.Interfaces
 {
     public interface IServiceFactory<T> where T: IEntityBase
     {
-        public IServiceBase<T> CreateInstance();
+        public void CreateInstance();
     }
 }
