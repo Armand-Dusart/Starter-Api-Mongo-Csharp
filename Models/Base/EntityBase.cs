@@ -11,10 +11,8 @@ namespace WepApi.Models
 {
     public abstract class EntityBase : IEntityBase
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
         public ObjectId Id { get; set; }
-        public DateTime CreatDate { get; set; } = DateTime.Now;
+        public DateTime CreatDate => Id.CreationTime;
         public DateTime ModifDate { get; set; } 
     }
 }

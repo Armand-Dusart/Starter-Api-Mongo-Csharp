@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace WebApi.Interfaces
 {
-    public interface IRepository<T> where T : IEntityBase
+    public interface IRepository<T>
     {
+        IQueryable<T> AsQueryable();
         public Task<List<T>> GetAll();
         public Task<T> GetById(T entityObject);
         public Task<List<T>> InsertMany(List<T> entitiesObject);

@@ -13,10 +13,12 @@ namespace WebApi.Services
     {
         private readonly Repository<T> _repository;
 
-        public ServiceBase(Repository<T> repository)
+        public ServiceBase()
         {
-            _repository = repository;
+
         }
+
+        
 
         public async Task<string> GetByIdEntity(string entity)
         {

@@ -13,6 +13,10 @@ using Newtonsoft.Json.Serialization;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 using WebApi.Settings;
+using MongoDB.Driver;
+using WebApi.Interfaces;
+using WebApi.Repository;
+using WebApi.Services;
 
 namespace WepApi
 {
@@ -33,12 +37,15 @@ namespace WepApi
             {
                 c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
+
             services.Configure<Settings>(
             options =>
             {
                 options.ConnectionString = Configuration.GetSection("MongoDb:ConnectionString").Value;
-                options.Database = Configuration.GetSection("MongoDb:Database").Value;
+                options.DatabaseName = Configuration.GetSection("MongoDb:Database").Value;
             });
+            services.AddSingleton<IMongoClient, MongoClient>(_ => new MongoClient(Configuration.GetSection("MongoDb:ConnectionString").Value));
+            services.AddScoped(typeof(IServiceBase<>), typeof(ServiceBase<>));
 
             services.AddControllers();
         }
@@ -62,6 +69,7 @@ namespace WepApi
             {
                 endpoints.MapControllers();
             });
+            //app.UseMvc();
         }
     }
 }

@@ -5,64 +5,78 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebApi.Attributes;
 using WebApi.Interfaces;
 using WebApi.Settings;
 
 namespace WebApi.Repository
 {
-    public class Repository<T> : IRepository<T> where T:IEntityBase
+    public class Repository<T> : IRepository<T> where T : IEntityBase
     {
-        protected readonly IMongoDB _mongoContext;
-        protected IMongoCollection<T> _dbCollection;
+        protected IMongoCollection<T> _collection;
 
-        public Repository (IMongoDB context)
+        public Repository(ISettings settings)
         {
-                _mongoContext = context;
-                _dbCollection = _mongoContext.GetCollection<T>(typeof(T).Name);
+            var database = new MongoClient(settings.ConnectionString).GetDatabase(settings.DatabaseName);
+            _collection = database.GetCollection<T>(GetCollectionName(typeof(T)));
+        }
+        private protected string GetCollectionName(Type documentType)
+        {
+            return ((BsonCollectionAttribute)documentType.GetCustomAttributes(
+                    typeof(BsonCollectionAttribute),
+                    true)
+                .FirstOrDefault())?.CollectionName;
         }
 
-        async public Task<List<T>> GetAll()
+
+        public virtual IQueryable<T> AsQueryable()
         {
-            return (List<T>)await _dbCollection.FindAsync(Builders<T>.Filter.Empty);
+            return _collection.AsQueryable();
         }
 
-        async public Task<T> GetById(T entityObject)
+
+        public async virtual  Task<List<T>> GetAll()
         {
-            return await _dbCollection.Find((T doc) => doc.Id == entityObject.Id).FirstOrDefaultAsync();
+            return (List<T>)await _collection.FindAsync(Builders<T>.Filter.Empty);
         }
 
-        async public Task<List<T>> InsertMany(List<T> entityObjects)
+        public async virtual  Task<T> GetById(T entityObject)
         {
-            await _dbCollection.InsertManyAsync(entityObjects);
+            return await _collection.Find((T doc) => doc.Id == entityObject.Id).FirstOrDefaultAsync();
+        }
+
+        public async virtual Task<List<T>> InsertMany(List<T> entityObjects)
+        {
+            await _collection.InsertManyAsync(entityObjects);
 
             return entityObjects;
         }
 
-        async public Task<T> InsertOne(T entityObject)
+        public async virtual  Task<T> InsertOne(T entityObject)
         {
-            await _dbCollection.InsertOneAsync(entityObject);
+            await _collection.InsertOneAsync(entityObject);
 
             return entityObject;
         }
 
-        public Task<List<T>> UpdateMany(List<T> entitiesObject)
+        public async virtual Task<List<T>> UpdateMany(List<T> entitiesObject)
         {
             throw new NotImplementedException();
         }
 
-        async public Task<T> UpdateOne (T entityObject)
+        public async virtual Task<T> UpdateOne (T entityObject)
         {
-            await _dbCollection.ReplaceOneAsync((T doc) => doc.Id == entityObject.Id, entityObject);
+            await _collection.ReplaceOneAsync((T doc) => doc.Id == entityObject.Id, entityObject);
 
             return entityObject;
         }
 
-        public Task<List<T>> DeleteMany(List<T> Entities)
+        public async virtual Task<List<T>> DeleteMany(List<T> Entities)
         {
             throw new NotImplementedException();
         }
 
-        public Task<T> DeleteOne(T Entity)
+        public async virtual Task<T> DeleteOne(T Entity)
         {
             throw new NotImplementedException();
         }

@@ -1,13 +1,12 @@
-﻿using MongoDB.Driver;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace WebApi.Interfaces
 {
-    public interface IMongoDB
+    public interface IServiceFactory<T> where T: IEntityBase
     {
-        public IMongoCollection<T> GetCollection<T>();
+        public IServiceBase<T> CreateInstance();
     }
 }
