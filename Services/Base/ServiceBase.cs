@@ -7,6 +7,8 @@ using WebApi.Repository;
 using WebApi.Interfaces;
 using Newtonsoft.Json;
 using WebApi.Factory;
+using MongoDB.Bson;
+using System.Linq.Expressions;
 
 namespace WebApi.Services
 {
@@ -19,9 +21,9 @@ namespace WebApi.Services
             RepositoryFactory = repositoryFactory;
         }
 
-        public async Task<string> GetByIdEntity(string entity)
+        public async Task<string> GetByIdEntity(string id)
         {
-            T result = await RepositoryFactory.Repository.GetById(JsonConvert.DeserializeObject<T>(entity));
+            T result = await RepositoryFactory.Repository.GetById(JsonConvert.DeserializeObject<ObjectId>(id));
 
             return JsonConvert.SerializeObject(result);
         }
@@ -42,7 +44,7 @@ namespace WebApi.Services
 
         public async Task<string> InsertManyEntity(string entities)
         {
-            List<T> result = await RepositoryFactory.Repository.UpdateMany(JsonConvert.DeserializeObject<List<T>>(entities));
+            List<T> result = await RepositoryFactory.Repository.InsertMany(JsonConvert.DeserializeObject<List<T>>(entities));
 
             return JsonConvert.SerializeObject(result);
         }
@@ -54,25 +56,36 @@ namespace WebApi.Services
             return JsonConvert.SerializeObject(result);
         }
 
-        public async Task<string> UpdateManyEntity(string entities)
+        public string UpdateManyEntity(string entities)
         {
-            List<T> result = await RepositoryFactory.Repository.UpdateMany(JsonConvert.DeserializeObject<List<T>>(entities));
+            List<T> result = RepositoryFactory.Repository.UpdateMany(JsonConvert.DeserializeObject<List<T>>(entities));
 
             return JsonConvert.SerializeObject(result);
         }
 
-        public async Task<string> DeleteOneEntity(string entity)
+        public async Task<string> DeleteOneEntity(string id)
         {
-            T result = await RepositoryFactory.Repository.DeleteOne(JsonConvert.DeserializeObject<T>(entity));
+            ObjectId result = await RepositoryFactory.Repository.DeleteOne(JsonConvert.DeserializeObject<ObjectId>(id));
 
             return JsonConvert.SerializeObject(result);
         }
-        public async Task<string> DeleteManyEntity(string entities)
+        public async Task<string> DeleteManyEntity(string ids)
         {
-            List<T> result = await RepositoryFactory.Repository.DeleteMany(JsonConvert.DeserializeObject<List<T>>(entities));
+            List<ObjectId> result = await RepositoryFactory.Repository.DeleteMany(JsonConvert.DeserializeObject<List<ObjectId>>(ids));
 
             return JsonConvert.SerializeObject(result);
         }
-        
+        public async  Task<string> FindManyEntity(Expression<Func<T, bool>> query)
+        {
+            List<T> result = await RepositoryFactory.Repository.FindMany(query);
+
+            return JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> FindOneEntity(Expression<Func<T, bool>> query)
+        {
+            T result = await  RepositoryFactory.Repository.FindOne(query);
+
+            return JsonConvert.SerializeObject(result);
+        }
     }
 }

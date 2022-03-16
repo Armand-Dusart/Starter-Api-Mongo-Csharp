@@ -23,24 +23,7 @@ namespace WebApi.Controllers
             _serviceFactory = serviceFactory;
         }
 
-        [HttpGet("GetAll")]
-        public async Task<string> GetAll()
-        {
-            string result = await _serviceFactory.Service.GetAllEntity();
-
-            return result;
-        }
-
-        [HttpGet("test")]
-        public string test()
-        {
-
-            string result = _serviceFactory.Service.Yolo();
-
-            return result;
-        }
-
-
+        
     }
 }
 

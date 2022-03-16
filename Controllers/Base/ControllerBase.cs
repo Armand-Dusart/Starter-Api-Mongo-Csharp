@@ -18,10 +18,47 @@ namespace WebApi.Controllers
             _serviceFactory = serviceFactory;
         }
 
-        [HttpGet]
-        public virtual async Task<string> GetAll()
+        [HttpGet("GetAll")]
+        public async Task<string> GetAll()
         {
             string result = await _serviceFactory.Service.GetAllEntity();
+
+            return result;
+        }
+        [HttpGet("GetById/{id}")]
+        public async Task<string> GetById(string id)
+        {
+            string result = await _serviceFactory.Service.GetByIdEntity(id);
+
+            return result;
+        }
+
+        [HttpPost("InsertOne")]
+        public async Task<string> InsertOne([FromForm] string entity)
+        {
+            string result = await _serviceFactory.Service.InsertOneEntity(entity);
+
+            return result;
+        }
+
+        [HttpPost("InsertMany")]
+        public async Task<string> InsertMany([FromForm] string entities)
+        {
+            string result = await _serviceFactory.Service.InsertManyEntity(entities);
+
+            return result;
+        }
+        [HttpPost("UpdateMany")]
+        public string UpdateMany([FromForm] string entities)
+        {
+            string result = _serviceFactory.Service.UpdateManyEntity(entities);
+
+            return result;
+        }
+        [HttpPost("UpdateOne")]
+        public async Task<string> UpdateOne([FromForm] string entity)
+        {
+            string result = await _serviceFactory.Service.UpdateOneEntity(entity);
 
             return result;
         }

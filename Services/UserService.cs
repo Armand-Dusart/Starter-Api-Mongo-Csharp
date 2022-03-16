@@ -16,9 +16,5 @@ namespace WebApi.Services
 
         }
 
-        public string Yolo()
-        {
-            return "Yolo";
-        }
     }
 }

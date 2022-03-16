@@ -9,6 +9,8 @@ using WebApi.Attributes;
 using WebApi.Interfaces;
 using WebApi.Settings;
 using Newtonsoft.Json;
+using MongoDB.Bson;
+using System.Linq.Expressions;
 
 namespace WebApi.Repository
 {
@@ -45,9 +47,9 @@ namespace WebApi.Repository
             return await _collection.Find(_ => true).ToListAsync();
         }
 
-        public async virtual  Task<T> GetById(T entityObject)
+        public async virtual  Task<T> GetById(ObjectId id)
         {
-            return await _collection.Find((T doc) => doc.Id == entityObject.Id).FirstOrDefaultAsync();
+            return await _collection.Find((T doc) => doc.Id == id).FirstOrDefaultAsync();
         }
 
         public async virtual Task<List<T>> InsertMany(List<T> entityObjects)
@@ -64,27 +66,44 @@ namespace WebApi.Repository
             return entityObject;
         }
 
-        public async virtual Task<List<T>> UpdateMany(List<T> entitiesObject)
+        public virtual List<T> UpdateMany(List<T> entitiesObject)
         {
-            throw new NotImplementedException();
+            entitiesObject.ForEach(async (T doc) => await UpdateOne(doc));
+
+            return entitiesObject;
         }
 
-        public async virtual Task<T> UpdateOne (T entityObject)
+        public async virtual Task<T> UpdateOne(T entityObject)
         {
             await _collection.ReplaceOneAsync((T doc) => doc.Id == entityObject.Id, entityObject);
 
             return entityObject;
         }
 
-        public async virtual Task<List<T>> DeleteMany(List<T> Entities)
+        public async virtual Task<List<ObjectId>> DeleteMany(List<ObjectId> ids)
         {
-            throw new NotImplementedException();
+            await _collection.DeleteOneAsync((T doc) => ids.Contains(doc.Id));
+
+            return ids;
         }
 
-        public async virtual Task<T> DeleteOne(T Entity)
+        public async virtual Task<ObjectId> DeleteOne(ObjectId id)
         {
-            throw new NotImplementedException();
-        }
+            await _collection.DeleteOneAsync((T doc) => doc.Id == id);
 
+            return id;
+        }
+        public async virtual Task<List<T>> FindMany(Expression<Func<T,bool>> query)
+        {
+            List<T> result = await _collection.Find(query).ToListAsync<T>();
+
+            return result;
+        }
+        public async virtual Task<T> FindOne(Expression<Func<T, bool>> query)
+        {
+            T result = await _collection.Find(query).FirstOrDefaultAsync();
+
+            return result;
+        }
     }
 }
