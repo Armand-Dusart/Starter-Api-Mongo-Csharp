@@ -38,17 +38,19 @@ namespace WepApi
                 c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
 
-            services.Configure<Settings>(
+            services.Configure<MongoSettings>(
             options =>
             {
-                options.ConnectionString = Configuration.GetSection("MongoDb:ConnectionString").Value;
-                options.DatabaseName = Configuration.GetSection("MongoDb:Database").Value;
+                options.ConnectionString = Configuration.GetSection("MongoDB:ConnectionString").Value;
+                options.DatabaseName = Configuration.GetSection("MongoDB:Database").Value;
             });
             services.AddSingleton<IMongoClient, MongoClient>(_ => new MongoClient(Configuration.GetSection("MongoDb:ConnectionString").Value));
 
             //services.AddScoped(typeof(IServiceBase<>), typeof(ServiceBase<>));
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            //services.AddScoped(typeof(IServiceFactory<>), typeof(ServiceFactory<,>));
+            //services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped(typeof(IServiceFactory<,>), typeof(ServiceFactory<,>));
+            services.AddScoped(typeof(IRepositoryFactory<,>), typeof(RepositoryFactory<,>));
+           
             services.AddControllers();
             services.AddMvc();
         }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using WebApi.Attributes;
 using WebApi.Interfaces;
 using WebApi.Settings;
+using Newtonsoft.Json;
 
 namespace WebApi.Repository
 {
@@ -15,11 +16,12 @@ namespace WebApi.Repository
     {
         protected IMongoCollection<T> _collection;
 
-        public Repository(ISettings settings)
+        public Repository(IOptions<MongoSettings> settings)
         {
-            var database = new MongoClient(settings.ConnectionString).GetDatabase(settings.DatabaseName);
+            var database = new MongoClient(settings.Value.ConnectionString).GetDatabase(settings.Value.DatabaseName);
             _collection = database.GetCollection<T>(GetCollectionName(typeof(T)));
         }
+
         private protected string GetCollectionName(Type documentType)
         {
             return ((BsonCollectionAttribute)documentType.GetCustomAttributes(
@@ -34,10 +36,13 @@ namespace WebApi.Repository
             return _collection.AsQueryable();
         }
 
-
-        public async virtual  Task<List<T>> GetAll()
+        public async virtual Task<string> GetAllTest()
         {
-            return (List<T>)await _collection.FindAsync(Builders<T>.Filter.Empty);
+            return JsonConvert.SerializeObject((List<T>)await _collection.FindAsync(Builders<T>.Filter.Empty));
+        }
+        public async virtual  Task<object> GetAll()
+        {
+            return await _collection.Find(_ => true).ToListAsync();
         }
 
         public async virtual  Task<T> GetById(T entityObject)

@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace WebApi.Interfaces
 {
-    public interface IServiceFactory<T> where T: IEntityBase
+    public interface IServiceFactory<T,S> where T: IEntityBase where S : IServiceBase<T>
     {
-        public void CreateInstance();
+        public S Service { get; set; }
     }
 }

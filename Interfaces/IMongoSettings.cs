@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace WebApi.Interfaces
 {
-    public interface ISettings
+    public interface IMongoSettings
     {
         string DatabaseName { get; set; }
         string ConnectionString { get; set; }

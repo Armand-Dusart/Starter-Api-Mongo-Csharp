@@ -8,7 +8,8 @@ namespace WebApi.Interfaces
     public interface IRepository<T> 
     {
         IQueryable<T> AsQueryable();
-        public Task<List<T>> GetAll();
+        public Task<string> GetAllTest();
+        public Task<object> GetAll();
         public Task<T> GetById(T entityObject);
         public Task<List<T>> InsertMany(List<T> entitiesObject);
         public Task<T> InsertOne(T entityObject);

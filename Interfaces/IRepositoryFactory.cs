@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace WebApi.Interfaces
 {
-    public interface IRepositoryFactory
+    public interface IRepositoryFactory<T, S> where T : IEntityBase where S : IRepository<T>
     {
-
+        public S Repository { get; set; }
     }
 }

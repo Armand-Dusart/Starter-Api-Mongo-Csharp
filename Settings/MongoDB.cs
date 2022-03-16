@@ -15,7 +15,7 @@ namespace WebApi.Settings
         private IMongoClient _mongoClient { get; set; }
         public IClientSessionHandle Session { get; set; }
 
-        public MongoDB(IOptions<Settings> configuration)
+        public MongoDB(IOptions<MongoSettings> configuration)
         {
             _mongoClient = new MongoClient(configuration.Value.ConnectionString);
             _db = _mongoClient.GetDatabase(configuration.Value.DatabaseName);

@@ -6,7 +6,7 @@ using WebApi.Interfaces;
 
 namespace WebApi.Settings
 {
-    public class Settings : ISettings
+    public class MongoSettings : IMongoSettings
     {
         public string DatabaseName { get; set; }
         public string ConnectionString { get; set; }

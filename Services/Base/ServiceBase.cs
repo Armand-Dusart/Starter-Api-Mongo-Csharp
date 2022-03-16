@@ -6,70 +6,70 @@ using WepApi.Models;
 using WebApi.Repository;
 using WebApi.Interfaces;
 using Newtonsoft.Json;
+using WebApi.Factory;
 
 namespace WebApi.Services
 {
     public class ServiceBase<T> : IServiceBase<T> where T : IEntityBase, new()
     {
-        private readonly IRepository<T> _repository;
+        private readonly IRepositoryFactory<T, Repository<T>> RepositoryFactory;
 
-        public ServiceBase(IRepository<T> repository)
+        public ServiceBase(IRepositoryFactory<T,Repository<T>> repositoryFactory)
         {
-            _repository = repository;
+            RepositoryFactory = repositoryFactory;
         }
-
 
         public async Task<string> GetByIdEntity(string entity)
         {
-            T result = await _repository.GetById(JsonConvert.DeserializeObject<T>(entity));
+            T result = await RepositoryFactory.Repository.GetById(JsonConvert.DeserializeObject<T>(entity));
 
             return JsonConvert.SerializeObject(result);
         }
 
         public async Task<string> GetAllEntity()
         {
-            List<T> result = await _repository.GetAll();
+            object result = await RepositoryFactory.Repository.GetAll();
 
             return JsonConvert.SerializeObject(result);
         }
         
         public async Task<string> InsertOneEntity(string entity)
         {
-            T result = await _repository.InsertOne(JsonConvert.DeserializeObject<T>(entity));
+            T result = await RepositoryFactory.Repository.InsertOne(JsonConvert.DeserializeObject<T>(entity));
 
             return JsonConvert.SerializeObject(result);
         }
 
         public async Task<string> InsertManyEntity(string entities)
         {
-            List<T> result = await _repository.UpdateMany(JsonConvert.DeserializeObject<List<T>>(entities));
+            List<T> result = await RepositoryFactory.Repository.UpdateMany(JsonConvert.DeserializeObject<List<T>>(entities));
 
             return JsonConvert.SerializeObject(result);
         }
         
         public async Task<string> UpdateOneEntity(string entity)
         {
-            T result = await _repository.UpdateOne(JsonConvert.DeserializeObject<T>(entity));
+            T result = await RepositoryFactory.Repository.UpdateOne(JsonConvert.DeserializeObject<T>(entity));
 
             return JsonConvert.SerializeObject(result);
         }
 
         public async Task<string> UpdateManyEntity(string entities)
         {
-            List<T> result = await _repository.UpdateMany(JsonConvert.DeserializeObject<List<T>>(entities));
+            List<T> result = await RepositoryFactory.Repository.UpdateMany(JsonConvert.DeserializeObject<List<T>>(entities));
 
             return JsonConvert.SerializeObject(result);
         }
 
         public async Task<string> DeleteOneEntity(string entity)
         {
-            T result = await _repository.DeleteOne(JsonConvert.DeserializeObject<T>(entity));
+            T result = await RepositoryFactory.Repository.DeleteOne(JsonConvert.DeserializeObject<T>(entity));
 
             return JsonConvert.SerializeObject(result);
         }
         public async Task<string> DeleteManyEntity(string entities)
         {
-            List<T> result = await _repository.DeleteMany(JsonConvert.DeserializeObject<List<T>>(entities));
+            List<T> result = await RepositoryFactory.Repository.DeleteMany(JsonConvert.DeserializeObject<List<T>>(entities));
 
             return JsonConvert.SerializeObject(result);
         }
